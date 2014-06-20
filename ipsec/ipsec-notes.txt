@@ -1,0 +1,170 @@
+-----------------------------------------------------------------------
+ random points on ipsec (theory), kmd , IKEv1/IKEv2 , ipsec data plane
+-----------------------------------------------------------------------
+
+1. Diffie Hellman Group or earlier called oakley group 
+
+The protocol has two system parameters p and g. They are both public and may be used by all the users in a system. 
+
+for ex:- DH group 1
+   (p)
+   The prime is(p): 2^768 - 2 ^704 - 1 + 2^64 * { [2^638 pi] + 149686 }
+   Its hexadecimal value is
+
+         FFFFFFFF FFFFFFFF C90FDAA2 2168C234 C4C6628B 80DC1CD1
+         29024E08 8A67CC74 020BBEA6 3B139B22 514A0879 8E3404DD
+         EF9519B3 CD3A431B 302B0A6D F25F1437 4FE1356D 6D51C245
+         E485B576 625E7EC6 F44C42E9 A63A3620 FFFFFFFF FFFFFFFF
+   (g)
+   The generator is: 2
+
+Suppose Alice and Bob want to agree on a shared secret key using the Diffie-Hellman key agreement protocol. 
+They proceed as follows: 
+
+[ step 1 ]
+Alice generates a random private value a and 
+Bob generates a random private value b 
+
+note: 'a' and 'b' are called private values
+
+[ step 2 ]
+Alice's public value is ga mod p and 
+
+Bob's public value is gb mod p. 
+
+[ step 3 ]
+They then exchange their public values. 
+
+[ step 4 ]
+Alice computes gab = (gb)a mod p, and 
+Bob computes gba = (ga)b mod p. 
+Since gab = gba = k, 
+
+Alice and Bob now have a shared secret key k.
+
+[ RFC 5996 ]
+- KE payload description 
+
+- format 
+                       1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   | Next Payload  |C|  RESERVED   |         Payload Length        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |   Diffie-Hellman Group Num    |           RESERVED            |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                                                               |
+   ~                       Key Exchange Data                       ~
+   |                                                               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+- Key Exchange Data = public value 
+
+- Key Exchange payload is constructed by copying one's Diffie-Hellman
+  public value into the "Key Exchange Data" portion of the payload
+
+
+2.
+  IKE Header Format for Port 4500
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |        Source Port            |      Destination Port         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |           Length              |           Checksum            |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                       Non-ESP Marker                          |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                      IKE header [RFC2409]                     |
+   ~                                                               ~
+   |                                                               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   The UDP header is a standard [RFC0768] header and is used as defined
+   in [RFC3947].  This document does not set any new requirements for
+   the checksum handling of an IKE packet.
+
+   A Non-ESP Marker is 4 zero-valued bytes aligning with the SPI field
+   of an ESP packet. 
+
+3.
+NAT-T RFC 3947
+
+NAT-T keep alive interval (default value)
+
+in strongswan,
+charon.keep_alive	20s	NAT keep alive interval
+
+
+ UDP-Encapsulated ESP Header Format
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |        Source Port            |      Destination Port         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |           Length              |           Checksum            |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                      ESP header [RFC2406]                     |
+   ~                                                               ~
+   |                                                               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   The UDP header is a standard [RFC0768] header, where
+
+   o  the Source Port and Destination Port MUST be the same as that used
+      by IKE traffic,
+   o  the IPv4 UDP Checksum SHOULD be transmitted as a zero value, and
+   o  receivers MUST NOT depend on the UDP checksum being a zero value.
+
+   The SPI field in the ESP header MUST NOT be a zero value.
+
+
+
+    IKE Header Format for Port 4500
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |        Source Port            |      Destination Port         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |           Length              |           Checksum            |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                       Non-ESP Marker                          |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                      IKE header [RFC2409]                     |
+   ~                                                               ~
+   |                                                               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   The UDP header is a standard [RFC0768] header and is used as defined
+   in [RFC3947].  This document does not set any new requirements for
+   the checksum handling of an IKE packet.
+
+   A Non-ESP Marker is 4 zero-valued bytes aligning with the SPI field
+   of an ESP packet.
+
+   NAT-Keepalive Packet Format
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |        Source Port            |      Destination Port         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |           Length              |           Checksum            |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |    0xFF       |
+   +-+-+-+-+-+-+-+-+
+
+   The UDP header is a standard [RFC0768] header, where
+
+   o  the Source Port and Destination Port MUST be the same as used by
+      UDP-ESP encapsulation of Section 2.1,
+   o  the IPv4 UDP Checksum SHOULD be transmitted as a zero value, and
+   o  receivers MUST NOT depend upon the UDP checksum being a zero
+      value.
+
+   The sender MUST use a one-octet-long payload with the value 0xFF.
+   The receiver SHOULD ignore a received NAT-keepalive packet.
+
