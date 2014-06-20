@@ -1,0 +1,97 @@
+
+
+pre-porcessor directive #error and #warning
+-------------------------------------------
+
+I]
+[ #error directive ]
+
+syntax :- 
+#error tokens
+
+expected output :- 
+when pre-processor hits the #error directive , compilation process is halted
+
+
+[ usage ]
+
+1. 
+   lets say there is an obsolete file .h/.c , whoes usage needs to be
+   deprecated and we dont know where all its used. 
+   
+   In that case do the following as done in one of jnpr files
+
+   file :- bsd/lib/libmd/md2.h
+   
+   $cat bsd/lib/libmd/md2.h
+  ------------------------------------------------------------------------ 
+   /* MD2.H - header file for MD2C.C
+    * $FreeBSD: src/lib/libmd/md2.h,v 1.9 2001/03/17 10:00:50 phk Exp $
+    */
+
+   /*
+    * This file has been intentionally removed from Junos as it contains
+    * software which requires a commercial license for use and Junos does
+    * not need the obsolete MD2 hashing function.
+    * Consult with legal if there is a need to purchase support for this
+    * algorithm in the future, but do NOT re-instate the code.
+    */
+
+    #error "Attempt to use MD2 hashing function from libmd not allowed."
+  ------------------------------------------------------------------------ 
+   $
+   anybody using above file will get compilation error saying 
+   "Attempt to use MD2 hashing function from libmd not allowed."
+
+2. 
+
+  we want some other condition to be met in order to compile existing file
+
+  a.
+  #ifndef PTHREAD_CANCEL_ASYNCHRONOUS
+  #error PTHREAD_CANCEL_ASYNCHRONOUS not defined
+  #endif
+
+  b. 
+  #if defined((VALUE_X % 2 == 0)) 
+  #error value of x should not be divisible by 2
+  #endif
+
+  c.
+  #if defined(X)
+  /* some junk */
+  #elif defined(Y)
+  /* some other junk */
+  #else
+  #error X or Y need to be defined in some makefile to compile
+  #endif
+
+  II]
+
+  [ #warning directive ]
+
+  syntax :- 
+  #warning tokens
+
+  expected output :- 
+  when pre-processor hits the #warning directive , compilation process shows up
+  the message 
+
+  note:-
+  - very similar to #error directive, so #error can be replaced if you think
+  compilation can proceed without any issues.
+
+  [ usage ]
+
+  1. 
+  #ifdef USING_ZARLINK_FPGA_DEVICE
+  #warning Compiling for the FPGA board (maybe -D in Makefile?)
+  #define FPGA_DEVICE_CS 31
+  #define DEVICE_CS_NAME "/dev/cpm_spi31"
+
+    2.
+  #if defined(VALUE_X > (1024*1024*1024))
+  #warning program may crash
+  #endif
+
+    < end of post # 1 >
