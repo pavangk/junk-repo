@@ -1,0 +1,82 @@
+" $Id: dot.vimrc 444693 2011-05-26 00:59:14Z sparasar $
+"
+" Format code the Juniper way
+"
+
+" added by pavan gururaj katti (pavangk@juniper.net)
+let g:molokai_original = 1
+colorscheme molokai
+
+set tabstop=8
+set softtabstop=4
+set shiftwidth=4
+" Do not set "expandtabs", it will prevent you from properly formatting code.
+set noexpandtab
+
+" Format code the Juniper way (for *.c and *.h only)
+"
+set cinoptions=(0
+
+"Pathogen
+filetype off " Pathogen needs to run before plugin indent on
+call pathogen#infect()
+call pathogen#helptags() " generate helptags for everything in 'runtimepath'
+filetype plugin indent on
+
+" added by pavan gururaj katti for syntatic
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+
+" added by pavan gururaj katti for cscope_maps
+source ~/.vim/bundle/cscope_maps.vim
+
+" Make  <ESC>:make  work as expected.
+set makeprg=mk
+set showmode
+
+" make arrow keys work in visual mode
+vmap <Esc>OA k
+vmap <Esc>OB j
+vmap <Esc>OC l
+vmap <Esc>OD h
+
+set background=light
+syntax enable
+syntax on
+
+highlight Cursor guibg=Green guifg=NONE
+
+
+" normal set commands
+set showmatch " show matching brackets
+set history=1000 " How many lines of history to remember
+set number
+set showcmd
+set hlsearch
+set incsearch
+set ruler
+
+" lines below is added 
+" by pavan gururaj katti pavangk@juniper.net
+
+if has('cscope')
+    set cscopetag cscopeverbose
+
+    cnoreabbrev csa cs add
+    cnoreabbrev csf cs find
+    cnoreabbrev csk cs kill
+    cnoreabbrev csr cs reset
+    cnoreabbrev css cs show
+    cnoreabbrev csh cs help
+
+endif
+
+"exit out of insert mode 
+inoremap jk <esc>

@@ -1,0 +1,145 @@
+# this bashrc belong to pavangk@juniper.net
+
+
+# added by pavan gururaj katti --- start 
+#commands 
+set bell-style none
+
+# SHELL variables
+export PS1='\033[32m <\u@\h->\033[0m '
+export EDITOR=vim
+export SVN_EDITOR=vim
+export COPY_VNC='vncconfig -nowin &'
+export HOME=/homes/pavangk
+export NEED_CLEAN_SHIPDIR=NO
+export PATH=/sbin:/bin:/usr/local/bin:/usr/sbin:/usr/games:/usr/local/sbin:/usr/local/bin:/usr/X11R6/bin:/volume/labtools/bin:/volume/buildtools/bin:/usr/local/libexec/gnats:/volume/fwtools/fm/current:/volume/fwtools/fm/current:/volume/fwtools/:/usr/bin:/homes/pavangk/sbin:/volume/ssd-tools/bin:/homes/pavangk/python/:/homes/pavangk/bin
+export CVSROOT="cvs.juniper.net:/cvs/juniper"
+#export PS1='\033[32m <\u@\h-\w-->\033[0m '
+
+# aliases 
+#general - set 1
+alias cls="clear"
+alias his="history"
+alias vi="vim"
+alias vnc='vncserver -geometry 1024x768 :44'
+alias vnckill='vncserver -kill :44'
+alias re="~/re"
+alias du="du -sh"
+#ipsec related 
+alias kmd="cd $SB/src/junos/usr.sbin/kmd"
+alias ukipsec="cd $SB//src/pfe/common/applications/svcs/ipsec"
+alias quick="cd $SB/src/vendor/authentec/quicksec-server-toolkit"
+alias quickbuild="cd $SB/src/junos/secure/lib/libquicksec-ipsec"
+alias plugin="cd $SB/src/junos/lib/libmsp-ipsec"
+alias spd="cd $SB/src/junos/usr.sbin/spd"
+alias spinfo="cd $SB/src/junos/usr.sbin/spinfo"
+alias ddl="cd $SB/src/junos/lib/ddl"
+alias exe="cd $SB/obj-i386/junos/secure/usr.sbin/kmd"
+alias build="cd $SB/src/junos/secure/usr.sbin/kmd"
+alias ha="cd $SB/src/junos/lib/libmsp-stateful-ha"
+alias js="cd $SB/src/junos/lib/libjunos-sync"
+alias mux="cd $SB/src/junos/lib/libjunos-message-aggregation"
+#general set 2 
+alias patchme="/volume/fwtools/patch/2.5.9/bin/patch"
+alias grep='grep -r --exclude=*\.svn*'
+alias sendmail="sendmail -odb -oem -oi -t"
+alias daily="cd /homes/ssd-builder/ngsrx-yocto-daily/DEV_X_151_X49_BRANCH/" 
+alias c="cd /c/pavangk"
+alias b="cd /b/pavangk"
+alias recover="rsu -c -k -d "
+alias cconf="rsu -c -d --forcecon"
+alias ebuild="cd $SB/src;mk-xlp64 ejunos-xlp64-jobs"
+alias eildexe="cd $SB/obj-xlp64/junos/bsd/boot/mips/ejunos-loader"
+alias qpr="query-pr --skip-closed --summary --responsible pavangk"
+alias l="ls -ltrh"
+alias mkj="mk jinstall-jobs"
+alias sfwpkg="cd $SB/obj-i386/pkgs/rootdir/packages"
+alias scp="rcp"
+alias q="exit"
+#svn related
+alias svn_accept="/volume/buildtools/bin/svn ls https://svl-svn.juniper.net/svn/junos-2009"
+alias svn_list='svn list https://bng-svn.juniper.net/svn/junos-2009/branches'
+
+#general set 3
+export LESS=-X
+alias vrc="vi ~/.vimrc"
+alias brc="vi ~/.bashrc"
+alias sbrc="source ~/.bashrc"
+#mx104 project related
+alias mk104="cd $SB/src ; mk jinstall-ppc-jobs"
+alias cha="cd $SB/src/junos/usr.sbin/chasd"
+alias svl_build="/volume/build/junos/"
+alias i2c="cd $SB/src/mtx/platform/mx-ppc/sys/jnxhost"
+alias bcpld="cd $SB/src/junos/bsd/sys/dev/amxbcpld"
+alias scpld="cd $SB/src/mtx/platform/mx-ppc/sys/jnxhost"
+alias p1a="gt amx-p1a-a"
+alias alts="ssh regress@altius-40g-p1-a"
+alias cmt="cd $SB/src/pfe/common/applications/cmt"
+
+#vsrx related
+alias vsrx="srx-build -v compile"
+alias alp="ssh contrail-vsrx-alpesh.svec.juniper.net"
+alias exe1="cd $SB/obj/i386/usp/secure/usr.sbin/iked/"
+alias iked="cd $SB/src/usp/usr.sbin/iked"
+alias biked="cd $SB/src/usp/secure/usr.sbin/iked"
+alias review="/volume/ssd-tools/bin/cr"
+alias csrx="srx-build -p csrx-ipsec compile" #to be executed @ the top of build directory
+alias dailysrx5k="cd /homes/slt-builder/sandboxes/DEV_X_151_X49_BRANCH" 
+
+alias mjain="mount -o tcp svl-junos-d032:/b /b"
+
+
+#tmux related
+alias trc="vi ~/.tmux.conf"
+
+
+#how to build cscope 
+build_cscope()
+{
+    export SEARCH_DIR="./junos/usr.sbin/kmd ./junos/lib/libmsp-ipsec ./junos/jsf/lib/crypto 
+   ./vendor/authentec/quicksec-server-toolkit/ ./junos/lib/libmp-sdk ./junos/usr.sbin/mspmand 
+   ./junos/lib/libmsp-svcs/svc-set/ ./pfe/common/toolkits/multi-svcs/svc-layer/ ./junos/include/jnx/multi-svcs/ ./junos/lib/libmsp-svcs/svc-set/ ./junos/bsd/sys/sys/jnx/ ./bsd/sys/mips/platform/svcs/ms2/ ./pfe-shared/ipc/jnx/";
+    find $SEARCH_DIR \( -name "*.c" -o -name "*.h" -o -name "*.s" -o -name "*.y" -o -name "*.dd" -o -name "*.odl" -o -name "*.idl" -o -name "*.asm" -o -name "*.gram" -o -name "*.t" -o -name "*.th" -o -name "*.xml" \) > cscope.files;
+    cscope -b -k;
+}
+
+
+#how to enable witness for 15.1 onwards 
+#mk NEED_INVARIANTS=no NEED_WITNESS=no junos-upgrade-x-jobs
+
+
+#how to add ssh keys
+#---------------------------
+#step 1) ssh-keygen -t rsa
+#step 2) [pavangk-mbp:~/.ssh] pavangk% ls
+#        id_rsa		id_rsa.pub	known_hosts
+
+#step 3) copy id_rsa.pub contents to server authorized_keys
+#step 4) try ssh ... you should be ready to go 
+
+#---------------------------
+
+# useful commands 
+#mv /var/home/regress/ejunos-xlp64-kernel /usr/share/pfe/ejunos-xlp64.elf
+#svn merge --accept postpone https://bng-svn.juniper.net/svn/junos-2009/branches/DEV_EABU_11Q4_BRANCH/junos/usr.sbin/kmd@HEAD
+#svn merge --accept postpone https://bng-svn.juniper.net/svn/junos-2009/branches/PVT_MOBILE_MIURA_IPSEC_BRANCH@450122 htt#ps://bng-svn.juniper.net/svn/junos-2009/branches/PVT_MOBILE_MIURA_BRANCH@454631 > ../logs/merge.log 2>&1
+#cat /proc/version (to know which distribution of linux os is installed on the linux)
+#find ./junos/usr.sbin/spinfo/ -name "*.[chxsS]" >> ~/cscope.files
+
+
+#openssl commands
+#openssl genrsa  -out privkey.pem 2048
+#paste -sd+ infile | bc
+
+#screen -x ashgupta/68489.os
+
+#68489.os 68489.os
+
+#s2c commit using command line
+#/volume/buildtools/bin/s2c.pl -p
+#/tmp/PR1083476_rsh_rcp.diff -c /tmp/PR1083476_rsh_rcp.log -b
+#RELEASE_151_F_THROTTLE
+
+
+
+# added by pavan gururaj katti --- end 
